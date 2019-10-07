@@ -21,16 +21,17 @@ import static org.junit.Assert.assertNull;
 public class InvoiceRepositoryTest {
 
     @Autowired
-    InvoiceRepository invoiceDao;
+    InvoiceRepository invoiceRepository;
 
     @Before
     public void setUp() throws Exception {
 
-        invoiceDao.deleteAll();
+        invoiceRepository.deleteAll();
     }
 
     @Test
     public void addGetUpdateDeleteInvoiceTest(){
+
         Invoice invoice = new Invoice();
 
         invoice.setCustomerId(1);
@@ -41,10 +42,10 @@ public class InvoiceRepositoryTest {
         invoice.setSurcharge(new BigDecimal("8.50"));
 
         //Save the invoice in the database
-        invoice = invoiceDao.save(invoice);
+        invoice = invoiceRepository.save(invoice);
 
         //Getting the invoice from the database
-        Optional<Invoice> fromService = invoiceDao.findById(invoice.getInvoiceId());
+        Optional<Invoice> fromService = invoiceRepository.findById(invoice.getInvoiceId());
 
         //making sure that they are equal
         assertEquals(invoice,fromService.get());
@@ -52,17 +53,17 @@ public class InvoiceRepositoryTest {
         //Update The invoice
         invoice.setShiptoZip("11103");
 
-        invoiceDao.save(invoice);
+        invoiceRepository.save(invoice);
 
         //get the updated invoice from the db
-        fromService = invoiceDao.findById(invoice.getInvoiceId());
+        fromService = invoiceRepository.findById(invoice.getInvoiceId());
 
         assertEquals(invoice, fromService.get());
 
         //delete
-        invoiceDao.delete(invoice);
+        invoiceRepository.delete(invoice);
 
-        fromService = invoiceDao.findById(invoice.getInvoiceId());
+        fromService = invoiceRepository.findById(invoice.getInvoiceId());
 
         assertNull(fromService.orElse(null));
     }
@@ -80,7 +81,7 @@ public class InvoiceRepositoryTest {
         invoice.setSurcharge(new BigDecimal("8.50"));
 
         //Save the invoice in the database
-        invoice = invoiceDao.save(invoice);
+        invoice = invoiceRepository.save(invoice);
 
         Invoice invoice1 = new Invoice();
 
@@ -92,9 +93,9 @@ public class InvoiceRepositoryTest {
         invoice1.setSurcharge(new BigDecimal("9.99"));
 
         //Save the invoice in the database
-        invoice1 = invoiceDao.save(invoice1);
+        invoice1 = invoiceRepository.save(invoice1);
 
-        List<Invoice> invoiceList = invoiceDao.getInvoicesByCustomerId(1);
+        List<Invoice> invoiceList = invoiceRepository.getInvoicesByCustomerId(1);
 
         assertEquals(2, invoiceList.size());
 
