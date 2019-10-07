@@ -8,16 +8,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
-public class InvoiceItemRepositoryTest {
+public class InvoiceRepositoryTest {
 
     @Autowired
     InvoiceRepository invoiceDao;
@@ -64,5 +65,38 @@ public class InvoiceItemRepositoryTest {
         fromService = invoiceDao.findById(invoice.getInvoiceId());
 
         assertNull(fromService.orElse(null));
+    }
+
+    @Test
+    public void getInvoicesByCustomerIdTest() {
+
+        Invoice invoice = new Invoice();
+
+        invoice.setCustomerId(1);
+        invoice.setShiptoZip("11102");
+        invoice.setPurchaseDate(LocalDate.parse("2019-12-14"));
+        invoice.setTotalCost(new BigDecimal("26.12"));
+        invoice.setSalesTax(new BigDecimal("1.35"));
+        invoice.setSurcharge(new BigDecimal("8.50"));
+
+        //Save the invoice in the database
+        invoice = invoiceDao.save(invoice);
+
+        Invoice invoice1 = new Invoice();
+
+        invoice1.setCustomerId(1);
+        invoice1.setShiptoZip("11105");
+        invoice1.setPurchaseDate(LocalDate.parse("2019-12-16"));
+        invoice1.setTotalCost(new BigDecimal("12.13"));
+        invoice1.setSalesTax(new BigDecimal("1.38"));
+        invoice1.setSurcharge(new BigDecimal("9.99"));
+
+        //Save the invoice in the database
+        invoice1 = invoiceDao.save(invoice1);
+
+        List<Invoice> invoiceList = invoiceDao.getInvoicesByCustomerId(1);
+
+        assertEquals(2, invoiceList.size());
+
     }
 }
